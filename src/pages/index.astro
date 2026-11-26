@@ -1,0 +1,393 @@
+---
+import Base from '../layouts/Base.astro';
+import ImageSlot from '../components/ImageSlot.astro';
+import RouteMap from '../components/RouteMap.astro';
+import { site, credentials, waLink } from '../data/site';
+import { serviceGroups, packagesNote } from '../data/services';
+import { audiences } from '../data/audiences';
+import { caseStudies } from '../data/caseStudies';
+import { fleet } from '../data/fleet';
+
+const routes = ['Cape Town', 'Durban', 'Gaborone', 'Kimberley', 'Drakensberg', 'Tsitsikamma', 'Zambia'];
+
+// Small documentary frames. Kept at thumbnail size because the source
+// photographs in the company profile are low resolution.
+const strip = [
+  { file: 'gallery-06.jpg', alt: 'A Lovisto Tours van travelling through a mountain pass' },
+  { file: 'gallery-05.jpg', alt: 'Visitors on the Big Hole viewing deck in Kimberley' },
+  { file: 'gallery-07.jpg', alt: 'Group at the Robben Island museum with Table Mountain behind' },
+  { file: 'gallery-03.jpg', alt: 'Learners on the Lore Primary School excursion' },
+  { file: 'gallery-08.jpg', alt: 'Coach waiting under a shelter before a group trip' },
+  { file: 'gallery-04.jpg', alt: 'Passenger van and group beside the road in the North West' },
+];
+---
+<Base
+  title="Lovisto Tours | Coaches, shuttles and tours from Mahikeng"
+  description="Lovisto Tours is a Mahikeng-based, NPTR-accredited tourist transport operator. Luxury and semi-luxury coach hire, shuttles, charters and tours across North West and beyond."
+>
+  <!-- Hero -->
+  <section class="border-b border-line" aria-labelledby="hero-h">
+    <div class="wrap grid gap-10 py-10 lg:grid-cols-12 lg:gap-12 lg:py-14">
+      <div class="flex flex-col justify-between lg:col-span-5">
+        <div>
+          <p class="label flex items-center gap-3 text-ink/65">
+            <span class="h-px w-8 bg-ink/40"></span>
+            Mahikeng, North West · Est. {site.established}
+          </p>
+          <h1 id="hero-h" class="mt-7 max-w-[10ch]">
+            The group trip, <span class=" font-normal text-forest">handled.</span>
+          </h1>
+          <p class="mt-7 max-w-[42ch] text-lg text-ink/70">
+            NPTR-accredited transport for schools, government, churches and companies. Coaches, shuttles and tours from Mahikeng since {site.established}.
+          </p>
+          <div class="mt-8 flex flex-wrap gap-3">
+            <a href="/contact" class="btn btn-primary">Plan a trip</a>
+            <a href="/fleet" class="btn btn-line">See the fleet</a>
+          </div>
+        </div>
+
+        <dl class="mt-12 grid grid-cols-2 gap-6 border-t border-line pt-6">
+          <div>
+            <dt class="label text-ink/65">Accreditation</dt>
+            <dd class="mt-2 text-sm font-semibold">NPTR · ACC25060001194</dd>
+          </div>
+          <div>
+            <dt class="label text-ink/65">Ownership</dt>
+            <dd class="mt-2 text-sm font-semibold">100% youth- and black-owned</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="lg:col-span-7">
+        <div class="grid gap-3 sm:grid-cols-2">
+          <div class="relative sm:col-span-2">
+            <ImageSlot
+              name="hero-coach-convoy.jpg"
+              class="aspect-[16/9]"
+              sizes="(min-width: 1024px) 58vw, 100vw"
+              widths={[640, 960, 1280]}
+              priority
+            />
+            <p class="absolute bottom-3 left-3 bg-paper px-3 py-1.5 text-xs font-semibold">Fleet line-up · Mahikeng</p>
+          </div>
+          <div class="relative">
+            <ImageSlot
+              name="fleet-game-drive.jpg"
+              class="aspect-[4/3]"
+              sizes="(min-width: 1024px) 29vw, 50vw"
+              widths={[480, 800, 960]}
+            />
+            <p class="absolute bottom-3 left-3 bg-paper px-3 py-1.5 text-xs font-semibold">Game drive · Mafikeng</p>
+          </div>
+          <div class="relative">
+            <ImageSlot
+              name="services-tours.jpg"
+              class="aspect-[4/3]"
+              sizes="(min-width: 1024px) 29vw, 50vw"
+              widths={[480, 800, 960]}
+            />
+            <p class="absolute bottom-3 left-3 bg-paper px-3 py-1.5 text-xs font-semibold">Rock pool · North West</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recent routes -->
+  <section class="border-b border-line bg-paper-2/60" aria-label="Recent routes">
+    <div class="wrap flex items-center gap-6 overflow-x-auto py-4">
+      <p class="label shrink-0 text-ink/65">Recent routes</p>
+      <ul class="flex shrink-0 items-center gap-6 text-sm font-medium text-ink/65">
+        {routes.map((route, index) => (
+          <li class="flex items-center gap-6">
+            <span>{route}</span>
+            {index < routes.length - 1 && <span class="h-1 w-1 bg-ink/30" aria-hidden="true"></span>}
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Credentials -->
+  <section class="border-b border-line" aria-labelledby="cred-h">
+    <div class="wrap grid gap-6 py-6 sm:grid-cols-2 lg:grid-cols-4">
+      <h2 id="cred-h" class="sr-only">Accreditation and credentials</h2>
+      {credentials.slice(0, 4).map((credential) => (
+        <div class="border-l border-line pl-4">
+          <p class="label text-ink/65">{credential.label}</p>
+          <p class="mt-1 text-sm text-ink/70">{credential.detail}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="wrap section-pad" aria-labelledby="services-h">
+    <div class="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
+      <div>
+        <p class="label text-ink/65">What we do</p>
+        <h2 id="services-h" class="mt-4 max-w-[16ch]">Three ways we move people.</h2>
+      </div>
+      <p class="max-w-[38ch] text-ink/70">
+        We coordinate itineraries, arrange vehicles and drivers, and handle the details that keep a group moving.
+      </p>
+    </div>
+
+    <div class="mt-12 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+      {serviceGroups.map((group) => (
+        <a href={`/services#${group.id}`} class="group flex h-full flex-col">
+          <div class="image-frame">
+            <ImageSlot
+              name={group.image}
+              class="aspect-[4/5]"
+              sizes="(min-width: 1024px) 30vw, (min-width: 640px) 46vw, 100vw"
+              widths={[320, 480, 640, 960]}
+            />
+          </div>
+          <div class="mt-4 flex flex-1 flex-col border-t border-line pt-3">
+            <div class="flex items-baseline justify-between gap-4">
+              <h3 class="text-2xl">{group.title}</h3>
+              <span class="label text-ink/65">{group.number}</span>
+            </div>
+            <p class="mt-2 max-w-[40ch] text-sm text-ink/70">{group.blurb}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <div class="mt-10 flex flex-wrap items-baseline justify-between gap-4 border-t border-line pt-4">
+      <p class="max-w-[60ch] text-sm text-ink/65">{packagesNote}</p>
+      <a href="/services" class="link-arrow">All services <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
+
+  <!-- Feature -->
+  <section class="bg-forest text-paper" aria-labelledby="feature-h">
+    <div class="grid lg:grid-cols-2">
+      <div class="relative min-h-[26rem] lg:min-h-[38rem]">
+        <div class="absolute inset-0">
+          <ImageSlot
+            name="gallery-02.jpg"
+            alt="Game-drive vehicle at sunset in the Mafikeng Game Reserve"
+            class="h-full"
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            widths={[640, 960, 1280]}
+            position="center"
+          />
+        </div>
+        <p class="absolute bottom-4 left-4 bg-forest/90 px-3 py-1.5 text-xs font-semibold text-paper">Mafikeng Game Reserve</p>
+      </div>
+      <div class="flex flex-col justify-center px-5 py-16 sm:px-10 lg:px-16">
+        <p class="label text-sun">At golden hour</p>
+        <h2 id="feature-h" class="mt-4 max-w-[12ch] text-paper!">The meeting ends. The trip begins.</h2>
+        <p class="mt-6 max-w-[42ch] text-paper/70">
+          Add a game drive at Mafikeng Game Reserve or Botsalano Game Reserve to a conference, a school trip or a family visit. We handle the vehicle, the guide and the timing.
+        </p>
+        <a href="/services#tours" class="btn btn-light mt-8">Explore tours</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Route map -->
+  <section class="bg-ink text-paper" aria-labelledby="map-h">
+    <div class="wrap section-pad">
+      <div class="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
+        <div>
+          <p class="label text-sun">Where we go</p>
+          <h2 id="map-h" class="mt-4 max-w-[14ch] text-paper!">From Mahikeng, in every direction.</h2>
+        </div>
+        <p class="max-w-[38ch] text-paper/70">
+          Destinations from our track record, 2016 to 2025. Select a destination to see the trips and their dates.
+        </p>
+      </div>
+      <div class="mt-10"><RouteMap /></div>
+      <p class="mt-6">
+        <a href="/track-record" class="link-arrow text-paper hover:text-sun">Full track record, 2016 to 2025 <span aria-hidden="true">→</span></a>
+      </p>
+    </div>
+  </section>
+
+  <!-- Who we serve -->
+  <section class="wrap section-pad" aria-labelledby="serve-h">
+    <div class="flex flex-wrap items-end justify-between gap-6">
+      <div>
+        <p class="label text-ink/65">Who we serve</p>
+        <h2 id="serve-h" class="mt-4 max-w-[14ch]">Built for groups with somewhere to be.</h2>
+      </div>
+      <p class="max-w-[34ch] text-ink/70">
+        Schools, government departments, companies and congregations. Each trip is planned around the group, not a fixed package.
+      </p>
+    </div>
+
+    <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      {audiences.map((audience) => (
+        <a
+          href={`/contact?who=${audience.slug}&type=${encodeURIComponent(audience.tripType)}`}
+          class="group flex h-full gap-4 sm:block"
+        >
+          <div class="image-frame w-24 shrink-0 sm:w-auto">
+            <ImageSlot
+              name={audience.image}
+              class="aspect-square sm:aspect-[4/5]"
+              sizes="(min-width: 1024px) 24vw, (min-width: 640px) 48vw, 96px"
+              widths={[160, 240, 320, 480]}
+            />
+          </div>
+          <div class="flex flex-1 flex-col sm:mt-4 sm:border-t sm:border-line sm:pt-3">
+            <p class="label text-ink/65">{audience.number}</p>
+            <h3 class="mt-1 text-xl">{audience.title}</h3>
+            <p class="mt-2 text-sm text-ink/70">{audience.text}</p>
+            <span class="mt-auto pt-3 text-xs font-semibold tracking-[0.12em] text-forest uppercase">
+              {audience.linkLabel} →
+            </span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- Case studies -->
+  <section class="border-y border-line bg-paper-2/60" aria-labelledby="cases-h">
+    <div class="wrap section-pad">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <div>
+          <p class="label text-ink/65">Selected work</p>
+          <h2 id="cases-h" class="mt-4 max-w-[14ch]">Two trips that show the range.</h2>
+        </div>
+        <p class="max-w-[34ch] text-ink/70">A summit delegation and a primary-school excursion. Both in 2025.</p>
+      </div>
+
+      <div class="mt-12 grid gap-10 lg:grid-cols-2">
+        {caseStudies.map((study) => (
+          <article class="group flex h-full flex-col">
+            <div class="image-frame">
+              <ImageSlot
+                name={study.image}
+                class="aspect-[4/3]"
+                sizes="(min-width: 1024px) 46vw, 100vw"
+                widths={[480, 800, 1200]}
+                position={study.image === 'case-lore-primary.jpg' ? 'center' : undefined}
+              />
+            </div>
+            <div class="mt-5 flex flex-1 flex-col border-t border-line pt-4">
+              <p class="label text-ink/65">{study.when}</p>
+              <h3 class="mt-2 text-2xl md:text-3xl">{study.title}</h3>
+              <p class="mt-3 max-w-[46ch] text-ink/65">{study.intro}</p>
+              <dl class="mt-5 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
+                {study.facts.slice(0, 4).map((fact) => (
+                  <>
+                    <dt class="text-ink/65">{fact.label}</dt>
+                    <dd class="text-ink/80">{fact.value}</dd>
+                  </>
+                ))}
+              </dl>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Fleet -->
+  <section class="wrap section-pad" aria-labelledby="fleet-h">
+    <div class="flex flex-wrap items-end justify-between gap-6">
+      <div>
+        <p class="label text-ink/65">Fleet</p>
+        <h2 id="fleet-h" class="mt-4 max-w-[14ch]">Coaches, vans and an open vehicle.</h2>
+      </div>
+      <a href="/fleet" class="btn btn-line">See the fleet</a>
+    </div>
+
+    <div class="mt-12 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+      {fleet.map((vehicle) => (
+        <a href="/fleet" class="group flex h-full flex-col">
+          <div class="image-frame">
+            <ImageSlot
+              name={vehicle.image}
+              class="aspect-[4/3]"
+              sizes="(min-width: 1024px) 24vw, (min-width: 640px) 48vw, 100vw"
+              widths={[320, 480, 640]}
+            />
+          </div>
+          <div class="mt-4 border-t border-line pt-3">
+            <h3 class="text-xl">{vehicle.name}</h3>
+            <p class="mt-1 text-sm text-ink/70">{vehicle.blurb}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- Photo strip -->
+  <section class="border-t border-line" aria-labelledby="strip-h">
+    <div class="wrap flex flex-wrap items-end justify-between gap-4 pt-10">
+      <div>
+        <p class="label text-ink/65">On the road</p>
+        <h2 id="strip-h" class="mt-3 text-2xl md:text-3xl">Scenes from the trips.</h2>
+      </div>
+      <p class="max-w-[34ch] text-sm text-ink/65">
+        Photographs from the Lovisto Tours company profile.
+      </p>
+    </div>
+    <ul class="wrap mt-6 grid grid-cols-3 gap-2 pb-12 sm:gap-3 lg:grid-cols-6">
+      {strip.map((photo) => (
+        <li>
+          <ImageSlot
+            name={photo.file}
+            alt={photo.alt}
+            class="aspect-square"
+            sizes="(min-width: 1024px) 15vw, (min-width: 640px) 30vw, 32vw"
+            widths={[240, 320, 480]}
+          />
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <!-- Final call to action -->
+  <section class="bg-forest text-paper" aria-labelledby="cta-h">
+    <div class="grid lg:grid-cols-2">
+      <div class="px-5 py-16 sm:px-10 lg:px-16 lg:py-24">
+        <p class="label text-sun">Next trip</p>
+        <h2 id="cta-h" class="mt-4 max-w-[12ch] text-paper!">Tell us where the group is going.</h2>
+        <p class="mt-6 max-w-[42ch] text-paper/70">
+          Send the date, the number of passengers and the pick-up and drop-off. We are based in Mahikeng and able to render services anywhere.
+        </p>
+        <a href="/contact" class="btn btn-primary mt-8">Plan a trip</a>
+
+        <dl class="mt-12 grid gap-5 border-t border-paper/20 pt-6 sm:grid-cols-2">
+          <div>
+            <dt class="label text-paper/65">Cell and WhatsApp</dt>
+            <dd class="mt-1"><a class="hover:text-sun" href={waLink()}>{site.phone}</a></dd>
+          </div>
+          <div>
+            <dt class="label text-paper/65">Office</dt>
+            <dd class="mt-1"><a class="hover:text-sun" href={site.telHref}>{site.tel}</a></dd>
+          </div>
+          <div>
+            <dt class="label text-paper/65">Email</dt>
+            <dd class="mt-1"><a class="break-all hover:text-sun" href={`mailto:${site.email}`}>{site.email}</a></dd>
+          </div>
+          <div>
+            <dt class="label text-paper/65">Base</dt>
+            <dd class="mt-1 text-paper/75">{site.address.city}, {site.address.region}</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="relative min-h-[24rem] lg:min-h-full">
+        <div class="absolute inset-0">
+          <ImageSlot
+            name="services-transport.jpg"
+            alt="A Lovisto Tours van and group beside the road beneath a koppie"
+            class="h-full"
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            widths={[640, 960, 1280]}
+            position="center"
+          />
+        </div>
+        <p class="absolute bottom-4 left-4 bg-forest/90 px-3 py-1.5 text-xs font-semibold text-paper">En route, North West</p>
+      </div>
+    </div>
+  </section>
+</Base>

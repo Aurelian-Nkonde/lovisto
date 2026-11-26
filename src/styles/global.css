@@ -1,0 +1,248 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   Lovisto Tours — visual system
+   Warm paper, deep forest, one signal yellow. The hex values are still
+   provisional until the client confirms their exact brand codes.
+   [TO BE CONFIRMED BY CLIENT]
+------------------------------------------------------------------- */
+@theme {
+  --color-paper: #f3efe6;
+  --color-paper-2: #eae3d5;
+  --color-ink: #111a16;
+  --color-forest: #123c2f;
+  --color-navy: #0b2a4a;
+  --color-sky: #2a7f9e;
+  --color-sun: #ffc20e;
+  --color-sand: #d8cbb8;
+  --color-line: #d4caba;
+  --color-white: #fbfaf6;
+
+  --font-display: "DM Sans Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: "DM Sans Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-serif: "Fraunces Variable", Georgia, "Times New Roman", serif;
+
+  --radius-brand: 0px;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-paper text-ink font-sans antialiased;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display text-ink;
+    font-weight: 600;
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+    text-wrap: balance;
+  }
+
+  h1 {
+    font-size: clamp(3rem, 7.4vw, 7rem);
+  }
+
+  h2 {
+    font-size: clamp(2.25rem, 4.6vw, 4.25rem);
+  }
+
+  h3 {
+    font-size: clamp(1.4rem, 2.3vw, 2rem);
+  }
+
+  p {
+    max-width: 64ch;
+  }
+
+  a {
+    text-underline-offset: 0.18em;
+  }
+
+  ::selection {
+    background: var(--color-sun);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+  }
+
+  [id] {
+    scroll-margin-top: 6rem;
+  }
+}
+
+@layer components {
+  .wrap {
+    @apply mx-auto w-full max-w-[92rem] px-5 sm:px-8 lg:px-12;
+  }
+
+  .wrap-tight {
+    @apply mx-auto w-full max-w-[74rem] px-5 sm:px-8;
+  }
+
+  .section-pad {
+    @apply py-20 md:py-28 lg:py-32;
+  }
+
+  .label {
+    @apply text-[0.68rem] font-semibold uppercase tracking-[0.18em];
+  }
+
+  .serif {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+  }
+
+  .btn {
+    @apply inline-flex min-h-12 items-center justify-center gap-2 self-start border border-transparent px-6 py-3 text-sm font-semibold transition-colors duration-200;
+  }
+
+  .btn-primary {
+    @apply bg-sun text-ink hover:bg-ink hover:text-paper;
+  }
+
+  .btn-dark {
+    @apply bg-ink text-paper hover:bg-forest;
+  }
+
+  .btn-line {
+    @apply border-ink/30 text-ink hover:border-ink hover:bg-ink hover:text-paper;
+  }
+
+  .btn-light {
+    @apply border-paper/35 text-paper hover:border-paper hover:bg-paper hover:text-ink;
+  }
+
+  .link-arrow {
+    @apply inline-flex items-center gap-2 text-sm font-semibold underline decoration-1 underline-offset-4 transition-colors hover:text-forest;
+  }
+
+  .field {
+    @apply w-full border-0 border-b border-line bg-transparent px-0 py-3 text-ink placeholder:text-ink/65 focus:border-ink focus:outline-none;
+  }
+
+  .field-label {
+    @apply mb-1 block text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-ink/70;
+  }
+
+  .image-frame {
+    @apply overflow-hidden bg-paper-2;
+  }
+
+  .image-frame img {
+    @apply transition-transform duration-700 ease-out;
+  }
+
+  .image-frame:hover img {
+    @apply scale-[1.03];
+  }
+
+  .hairline {
+    @apply border-t border-line;
+  }
+
+  .rule-dark {
+    @apply border-t border-paper/20;
+  }
+
+  /* A clearly labelled slot until a real photograph is supplied. */
+  .slot-empty {
+    background:
+      repeating-linear-gradient(135deg, transparent 0 18px, rgb(17 26 22 / 0.045) 18px 19px),
+      var(--color-paper-2);
+  }
+}
+
+/* Content is only hidden when JavaScript is available. */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 800ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 800ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.js .reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+.js .reveal-delay-1 {
+  transition-delay: 80ms;
+}
+
+.js .reveal-delay-2 {
+  transition-delay: 160ms;
+}
+
+.js .reveal-delay-3 {
+  transition-delay: 240ms;
+}
+
+/* Route-map interactions. */
+.map-route {
+  transition:
+    stroke 180ms ease,
+    stroke-width 180ms ease,
+    opacity 180ms ease;
+}
+
+.map-route.is-active {
+  stroke: var(--color-sun);
+  stroke-width: 3;
+  opacity: 1;
+}
+
+.map-pin circle.dot {
+  transition:
+    r 180ms ease,
+    fill 180ms ease;
+}
+
+.map-pin:hover circle.dot,
+.map-pin.is-active circle.dot {
+  fill: var(--color-sun);
+  stroke: var(--color-paper);
+}
+
+.map-pin {
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .js .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .image-frame img {
+    transition: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+  }
+}

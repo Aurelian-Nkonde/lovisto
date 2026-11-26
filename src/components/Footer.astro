@@ -1,0 +1,72 @@
+---
+import { site, nav, utilityNav, credentials } from '../data/site';
+import { company } from '../data/company';
+---
+<footer class="border-t-4 border-sun bg-forest text-paper">
+  <div class="wrap py-14 md:py-20">
+    <div class="grid gap-12 border-b border-paper/20 pb-12 lg:grid-cols-[1.35fr_1fr] lg:items-end">
+      <div>
+        <p class="label text-sun">Mahikeng, North West · since {site.established}</p>
+        <p class="mt-5 font-display text-[clamp(3.25rem,7vw,7rem)] leading-[0.9] font-semibold tracking-[-0.055em]">
+          Lovisto <span class="font-normal text-sun">Tours</span>
+        </p>
+        <p class="mt-5 max-w-[38ch] text-lg text-paper/75">
+          {company.reach} Coaches, shuttles, tours and travel management for groups.
+        </p>
+      </div>
+      <div class="lg:justify-self-end">
+        <a href="/contact" class="btn btn-primary">Plan a trip</a>
+        <p class="mt-4 max-w-[30ch] text-sm text-paper/65">
+          Tell us the date, the passenger count and the route. We will reply with a quote.
+        </p>
+      </div>
+    </div>
+
+    <div class="grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4">
+      <div>
+        <h2 class="label text-paper/65">Find us</h2>
+        <address class="mt-4 space-y-1 text-sm text-paper/80 not-italic">
+          <p>{site.address.street}</p>
+          <p>{site.address.city}, {site.address.region}</p>
+          <p>{site.address.country}</p>
+          <p class="pt-2">{site.address.postal}</p>
+        </address>
+      </div>
+
+      <div>
+        <h2 class="label text-paper/65">Talk to us</h2>
+        <ul class="mt-4 space-y-2 text-sm text-paper/80">
+          <li><a class="hover:text-sun" href={site.phoneHref}>{site.phone}</a><span class="block text-xs text-paper/65">Cell and WhatsApp</span></li>
+          <li><a class="hover:text-sun" href={site.telHref}>{site.tel}</a><span class="block text-xs text-paper/65">Office</span></li>
+          <li><a class="break-all hover:text-sun" href={`mailto:${site.email}`}>{site.email}</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="label text-paper/65">Explore</h2>
+        <ul class="mt-4 grid grid-cols-2 gap-x-6 gap-y-2 text-sm text-paper/80">
+          {[...nav, ...utilityNav].map((item) => (
+            <li><a class="hover:text-sun" href={item.href}>{item.label}</a></li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="label text-paper/65">Credentials</h2>
+        <ul class="mt-4 space-y-3 text-xs text-paper/65">
+          {credentials.slice(0, 3).map((credential) => (
+            <li class="border-l border-sun/60 pl-3">
+              <span class="block font-semibold text-paper/85">{credential.label}</span>
+              <span class="mt-0.5 block">{credential.detail}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap gap-x-8 gap-y-2 border-t border-paper/20 pt-6 text-xs text-paper/65">
+      <p>© {new Date().getFullYear()} {site.name}</p>
+      <p class="ml-auto">Company registration {company.registration}</p>
+    </div>
+  </div>
+</footer>

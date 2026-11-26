@@ -1,0 +1,16 @@
+---
+// OpenStreetMap embed: no API key, no tracking, lazy-loaded.
+const src = 'https://www.openstreetmap.org/export/embed.html?bbox=25.50%2C-25.95%2C25.78%2C-25.77&layer=mapnik&marker=-25.86%2C25.64';
+---
+<div class="border border-line bg-paper-2">
+  <iframe
+    title="Map showing the Mahikeng area, North West"
+    src={src}
+    class="h-80 w-full sm:h-96"
+    loading="lazy"
+    referrerpolicy="no-referrer-when-downgrade"
+  ></iframe>
+  <p class="border-t border-line p-4 text-xs text-ink/70">
+    Area map of Mahikeng, not a pin for the exact stand. Company address: Stand no 12041, Lomanyaneng Village, Mahikeng, North West.
+  </p>
+</div>

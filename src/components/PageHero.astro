@@ -1,0 +1,68 @@
+---
+import ImageSlot from './ImageSlot.astro';
+
+interface Props {
+  label: string;
+  title: string;
+  intro?: string;
+  image?: string;
+  imageAlt?: string;
+  caption?: string;
+  imagePosition?: string;
+  imageClass?: string;
+  meta?: { label: string; value: string }[];
+}
+
+const {
+  label,
+  title,
+  intro,
+  image,
+  imageAlt,
+  caption,
+  imagePosition,
+  imageClass = 'aspect-[3/2] lg:aspect-[4/5]',
+  meta = [],
+} = Astro.props;
+---
+<section class="border-b border-line" aria-labelledby="page-title">
+  <div class:list={['wrap grid gap-10 py-10 lg:gap-14 lg:py-16', image ? 'lg:grid-cols-12' : 'lg:grid-cols-9']}>
+    <div class:list={['flex flex-col', image ? 'lg:col-span-8' : 'lg:col-span-9']}>
+      <p class="label flex items-center gap-3 text-ink/65">
+        <span class="h-px w-8 bg-ink/40"></span>
+        {label}
+      </p>
+      <h1 id="page-title" class="mt-6 max-w-[13ch]">{title}</h1>
+      {intro && <p class="mt-6 max-w-[52ch] text-lg text-ink/70">{intro}</p>}
+
+      {meta.length > 0 && (
+        <dl class="mt-auto grid gap-5 border-t border-line pt-6 sm:grid-cols-3">
+          {meta.map((item) => (
+            <div>
+              <dt class="label text-ink/65">{item.label}</dt>
+              <dd class="mt-1.5 text-sm font-semibold">{item.value}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
+
+      <slot />
+    </div>
+
+    {image && (
+      <div class="lg:col-span-4">
+        <div class="image-frame">
+          <ImageSlot
+            name={image}
+            alt={imageAlt}
+            class={imageClass}
+            sizes="(min-width: 1024px) 28vw, 100vw"
+            widths={[320, 480, 640, 960]}
+            position={imagePosition}
+          />
+        </div>
+        {caption && <p class="mt-2 max-w-[34ch] text-xs text-ink/65">{caption}</p>}
+      </div>
+    )}
+  </div>
+</section>

@@ -1,0 +1,205 @@
+---
+import { site } from '../data/site';
+
+// Formspree: set PUBLIC_FORM_ENDPOINT to https://formspree.io/f/xxxxxxx
+// Web3Forms: set it to https://api.web3forms.com/submit and add the access key.
+// With no endpoint configured the form offers a pre-filled email instead.
+const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
+const accessKey = import.meta.env.PUBLIC_FORM_ACCESS_KEY ?? '';
+
+const tripTypes = [
+  'Charter',
+  'Shuttle / transfer',
+  'Coach hire',
+  'Tour',
+  'School trip',
+  'Teambuilding',
+  'Travel management',
+  'Other',
+];
+---
+<form
+  id="quote-form"
+  class="grid gap-6 md:grid-cols-2"
+  method="POST"
+  action={endpoint || `mailto:${site.email}`}
+  enctype={endpoint ? undefined : 'text/plain'}
+  data-endpoint={endpoint}
+  novalidate
+>
+  {accessKey && <input type="hidden" name="access_key" value={accessKey} />}
+  <input type="hidden" name="subject" value="Quote request — Lovisto Tours" />
+  <!-- <div class="h-0 w-0 overflow-hidden" aria-hidden="true">
+    <label>Leave this field empty <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" /></label>
+  </div> -->
+
+  <div>
+    <label class="field-label" for="name">Your name <span class="text-forest">*</span></label>
+    <input class="field" id="name" name="name" type="text" autocomplete="name" required minlength="2" aria-describedby="name-error" />
+    <p id="name-error" class="mt-1 text-sm text-red-700" data-error hidden>Please enter your name.</p>
+  </div>
+
+  <div>
+    <label class="field-label" for="organisation">Organisation</label>
+    <input class="field" id="organisation" name="organisation" type="text" autocomplete="organization" />
+  </div>
+
+  <div>
+    <label class="field-label" for="phone">Phone <span class="text-forest">*</span></label>
+    <input class="field" id="phone" name="phone" type="tel" autocomplete="tel" required pattern="[+0-9 ()-]{7,20}" aria-describedby="phone-error" />
+    <p id="phone-error" class="mt-1 text-sm text-red-700" data-error hidden>Please enter a reachable phone number.</p>
+  </div>
+
+  <div>
+    <label class="field-label" for="email">Email <span class="text-forest">*</span></label>
+    <input class="field" id="email" name="email" type="email" autocomplete="email" required aria-describedby="email-error" />
+    <p id="email-error" class="mt-1 text-sm text-red-700" data-error hidden>Please enter a valid email address.</p>
+  </div>
+
+  <div>
+    <label class="field-label" for="trip-type">Trip type <span class="text-forest">*</span></label>
+    <select class="field" id="trip-type" name="trip_type" required aria-describedby="trip-error">
+      <option value="">Select one</option>
+      {tripTypes.map((type) => <option value={type}>{type}</option>)}
+    </select>
+    <p id="trip-error" class="mt-1 text-sm text-red-700" data-error hidden>Please choose a trip type.</p>
+  </div>
+
+  <div>
+    <label class="field-label" for="passengers">Number of passengers <span class="text-forest">*</span></label>
+    <input class="field" id="passengers" name="passengers" type="number" min="1" max="500" required aria-describedby="passengers-error" />
+    <p id="passengers-error" class="mt-1 text-sm text-red-700" data-error hidden>Please enter the number of passengers.</p>
+  </div>
+
+  <div>
+    <label class="field-label" for="travel-dates">Travel date(s) <span class="text-forest">*</span></label>
+    <input class="field" id="travel-dates" name="travel_dates" type="text" placeholder="e.g. 17–24 November 2025" required aria-describedby="dates-error" />
+    <p id="dates-error" class="mt-1 text-sm text-red-700" data-error hidden>Please tell us when you plan to travel.</p>
+  </div>
+
+  <div>
+    <label class="field-label" for="pickup">Pick-up</label>
+    <input class="field" id="pickup" name="pickup" type="text" autocomplete="off" />
+  </div>
+
+  <div>
+    <label class="field-label" for="dropoff">Drop-off</label>
+    <input class="field" id="dropoff" name="dropoff" type="text" autocomplete="off" />
+  </div>
+
+  <div class="md:col-span-2">
+    <label class="field-label" for="message">Message</label>
+    <textarea class="field min-h-32" id="message" name="message" rows="5" placeholder="Tell us about the group and the itinerary."></textarea>
+  </div>
+
+  <div class="flex flex-col gap-3 sm:flex-row md:col-span-2">
+    <button type="submit" class="btn btn-dark">Send quote request</button>
+    <button type="button" id="whatsapp-send" class="btn btn-line">Send via WhatsApp</button>
+  </div>
+
+  <div class="md:col-span-2">
+    <p id="form-status" class="border-l-4 border-sun bg-white p-4 text-sm" role="status" aria-live="polite" hidden></p>
+  </div>
+</form>
+
+<script>
+  const form = document.getElementById('quote-form') as HTMLFormElement | null;
+  if (form) {
+    const status = document.getElementById('form-status') as HTMLElement;
+    const whatsapp = document.getElementById('whatsapp-send') as HTMLButtonElement;
+    const endpoint = form.dataset.endpoint ?? '';
+    const fields = Array.from(form.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(
+      'input[required], select[required], textarea[required]'
+    ));
+
+    const errorFor = (field: Element) => form.querySelector<HTMLElement>(`#${field.id}-error`);
+
+    const validate = () => {
+      const firstInvalid = fields.find((field) => !field.checkValidity());
+      fields.forEach((field) => {
+        const valid = field.checkValidity();
+        const error = errorFor(field);
+        if (error) error.hidden = valid;
+        field.setAttribute('aria-invalid', String(!valid));
+      });
+      if (firstInvalid) firstInvalid.focus();
+      return !firstInvalid;
+    };
+
+    fields.forEach((field) => {
+      field.addEventListener('input', () => {
+        if (field.getAttribute('aria-invalid') === 'true' && field.checkValidity()) {
+          field.setAttribute('aria-invalid', 'false');
+          const error = errorFor(field);
+          if (error) error.hidden = true;
+        }
+      });
+    });
+
+    const value = (name: string) => (form.elements.namedItem(name) as HTMLInputElement | null)?.value.trim() ?? '';
+
+    const message = () => [
+      'Hello Lovisto Tours, I would like a quote.',
+      `Name: ${value('name')}`,
+      `Organisation: ${value('organisation') || '—'}`,
+      `Phone: ${value('phone')}`,
+      `Email: ${value('email')}`,
+      `Trip type: ${value('trip_type')}`,
+      `Travel date(s): ${value('travel_dates')}`,
+      `Passengers: ${value('passengers')}`,
+      `Pick-up: ${value('pickup') || '—'}`,
+      `Drop-off: ${value('dropoff') || '—'}`,
+      `Message: ${value('message') || '—'}`,
+    ].join('\n');
+
+    whatsapp.addEventListener('click', () => {
+      if (!validate()) return;
+      window.open(`https://wa.me/27847815943?text=${encodeURIComponent(message())}`, '_blank', 'noopener');
+    });
+
+    // Pre-fill from "who we serve" links on the home page.
+    const params = new URLSearchParams(window.location.search);
+    const presetType = params.get('type');
+    const presetWho = params.get('who');
+    const select = form.elements.namedItem('trip_type') as HTMLSelectElement;
+    const option = Array.from(select.options).find((item) => item.value === presetType);
+    if (option) select.value = presetType ?? '';
+    const messageField = form.elements.namedItem('message') as HTMLTextAreaElement;
+    if (presetWho) messageField.value = `I would like a quote for ${presetWho.replaceAll('-', ' ')}.`;
+
+    form.addEventListener('submit', async (event) => {
+      if (!validate()) {
+        event.preventDefault();
+        return;
+      }
+      if (!endpoint) {
+        event.preventDefault();
+        status.hidden = false;
+        status.replaceChildren();
+        status.append(
+          document.createTextNode('The online form endpoint is not configured yet. Send this request by email or WhatsApp instead: ')
+        );
+        const link = document.createElement('a');
+        link.href = `mailto:info@lovistotours.co.za?subject=${encodeURIComponent('Quote request — Lovisto Tours')}&body=${encodeURIComponent(message())}`;
+        link.textContent = 'Open email app';
+        status.append(link);
+        return;
+      }
+      event.preventDefault();
+      status.hidden = false;
+      status.textContent = 'Sending your request…';
+      try {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' },
+        });
+        if (!response.ok) throw new Error('Request failed');
+        status.textContent = 'Thank you. Your request has been sent. We will reply using the details you provided.';
+        form.reset();
+      } catch {
+        status.textContent = 'We could not send that request. Please call +27 847 815 943, or use the WhatsApp button below.';
+      }
+    });
+  }
+</script>

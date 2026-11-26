@@ -1,0 +1,151 @@
+---
+import Base from '../layouts/Base.astro';
+import ImageSlot from '../components/ImageSlot.astro';
+import PageHero from '../components/PageHero.astro';
+import { company } from '../data/company';
+import { site, credentials } from '../data/site';
+---
+<Base
+  title="About | Founded in Mahikeng in 2014 by Thusho Monnagaratoe"
+  description="Lovisto Tours was founded in Mahikeng in 2014 by managing director Thusho Monnagaratoe. Read our vision, mission, purpose, goals, values, ownership and NPTR accreditation."
+>
+  <PageHero
+    label="About Lovisto Tours"
+    title="Started in Mahikeng in 2014."
+    intro={`${company.founder}, ${company.founderRole.toLowerCase()}, founded Lovisto Tours Transport & Enterprise after researching the area and its surrounding area of operations.`}
+    image="Mahikeng.webp"
+    imageAlt="Lovisto Tours passenger vans outside a building in the North West"
+    caption="Company vehicles, North West · company profile"
+    imageClass="aspect-[3/2] max-w-[30rem] lg:aspect-[4/5] lg:max-w-none"
+  />
+
+  <section class="wrap section-pad" aria-label="Company background">
+    <div class="grid gap-10 lg:grid-cols-12 lg:gap-12">
+      <div class="lg:col-span-7">
+        <p class="label text-ink/65">Who we are</p>
+        <h2 class="mt-4 max-w-[15ch]">A tour operator based in the North West.</h2>
+        <p class="mt-6 max-w-[52ch] text-lg text-ink/70">
+          We are based in Mahikeng, the capital city of North West Province, and are flexible and able to render our services anywhere. We are {company.ownership}, and accredited by the National Public Transport Regulator as a tourist transport operator.
+        </p>
+        <p class="mt-5 max-w-[52ch] text-ink/70">
+          Our work runs from local tours around Mahikeng and game drives at Mafikeng Game Reserve and Botsalano Game Reserve to coach runs to Cape Town and Durban, cross-border trips to Gaborone and Zambia, and travel management for provincial government departments.
+        </p>
+
+        <dl class="mt-10 grid gap-5 border-t border-line pt-6 sm:grid-cols-2">
+          <div>
+            <dt class="label text-ink/65">Founded</dt>
+            <dd class="mt-1 font-semibold">{company.established}</dd>
+          </div>
+          <div>
+            <dt class="label text-ink/65">Managing director</dt>
+            <dd class="mt-1 font-semibold">{company.founder}</dd>
+          </div>
+          <div>
+            <dt class="label text-ink/65">Ownership</dt>
+            <dd class="mt-1 font-semibold">{company.ownership}</dd>
+          </div>
+          <div>
+            <dt class="label text-ink/65">Registration</dt>
+            <dd class="mt-1 font-semibold">{company.registration}</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="lg:col-span-5">
+        <div class="image-frame">
+          <ImageSlot
+            name="services-transport.jpg"
+            class="aspect-[3/2] lg:aspect-[4/5]"
+            sizes="(min-width: 1024px) 38vw, 100vw"
+            widths={[480, 800, 1200]}
+          />
+        </div>
+        <p class="mt-2 text-xs text-ink/65">Passenger van and trailer, North West · company profile</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-y border-line bg-paper-2/60" aria-labelledby="direction-h">
+    <div class="wrap section-pad">
+      <p class="label text-ink/65">Direction</p>
+      <h2 id="direction-h" class="mt-4 max-w-[12ch]">Vision, mission and purpose.</h2>
+      <div class="mt-12 grid gap-10 md:grid-cols-3">
+        <article class="border-t border-ink/25 pt-5">
+          <p class="label text-ink/65">Vision</p>
+          <p class="mt-3 max-w-[34ch] text-ink/75">{company.vision}</p>
+        </article>
+        <article class="border-t border-ink/25 pt-5">
+          <p class="label text-ink/65">Mission</p>
+          <p class="mt-3 max-w-[34ch] text-ink/75">{company.mission}</p>
+        </article>
+        <article class="border-t border-ink/25 pt-5">
+          <p class="label text-ink/65">Purpose</p>
+          <p class="mt-3 max-w-[34ch] text-ink/75">{company.purpose}</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-forest text-paper" aria-labelledby="standards-h">
+    <div class="wrap grid gap-12 py-16 md:grid-cols-2 md:py-24">
+      <div>
+        <p class="label text-sun">Goals</p>
+        <h2 id="standards-h" class="mt-4 max-w-[12ch] text-paper!">What we set out to do.</h2>
+        <ol class="mt-8">
+          {company.goals.map((goal, index) => (
+            <li class="grid grid-cols-[2rem_1fr] gap-4 border-t border-paper/20 py-5">
+              <span class="text-sm font-semibold text-sun">0{index + 1}</span>
+              <span class="text-paper/75">{goal}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+      <div>
+        <p class="label text-sun">Values and working principles</p>
+        <h2 class="mt-4 max-w-[12ch] text-paper!">How we work.</h2>
+        <ul class="mt-8">
+          {company.values.map((value) => (
+            <li class="border-t border-paper/20 py-5">
+              <span class="font-semibold">{value.title}</span>
+              <span class="mt-1 block text-sm text-paper/65">{value.detail}</span>
+            </li>
+          ))}
+        </ul>
+        <ul class="mt-8 space-y-3 text-sm text-paper/65">
+          {company.workingPrinciples.map((principle) => (
+            <li class="flex gap-3"><span class="text-sun" aria-hidden="true">—</span><span>{principle}</span></li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section-pad" aria-labelledby="about-cred-h">
+    <div class="grid gap-10 lg:grid-cols-12">
+      <div class="lg:col-span-4">
+        <p class="label text-ink/65">Accreditation and ownership</p>
+        <h2 id="about-cred-h" class="mt-4 max-w-[12ch]">The details buyers ask for.</h2>
+        <p class="mt-5 text-ink/70">Compliance information is also available as a procurement summary for tender and supplier records.</p>
+        <a href="/procurement" class="btn btn-line mt-7">Procurement pack</a>
+      </div>
+      <dl class="grid gap-6 sm:grid-cols-2 lg:col-span-8">
+        {credentials.map((credential) => (
+          <div class="border-l border-sun pl-4">
+            <dt class="text-sm font-semibold">{credential.label}</dt>
+            <dd class="mt-1 text-sm text-ink/70">{credential.detail}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <section class="border-t border-line" aria-labelledby="about-cta-h">
+    <div class="wrap grid gap-6 py-14 md:grid-cols-[1fr_auto] md:items-center md:py-16">
+      <div>
+        <h2 id="about-cta-h" class="text-3xl md:text-4xl">Work with us.</h2>
+        <p class="mt-3 text-ink/65">Tell us the date, route and passenger count. We are based in {site.address.city}, {site.address.region}.</p>
+      </div>
+      <a href="/contact" class="btn btn-dark">Plan a trip</a>
+    </div>
+  </section>
+</Base>

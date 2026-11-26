@@ -1,0 +1,188 @@
+---
+import { origin, places, routeVia, eventsForPlace } from '../data/events';
+
+// Schematic lon/lat projection onto the SVG. Not a surveyed map.
+const X0 = 40, Y0 = 70, SX = 48.1, SY = 55;
+const proj = (point: { lon: number; lat: number; offMap?: boolean }) =>
+  point.offMap
+    ? { x: 470, y: 26 }
+    : { x: X0 + (point.lon - 17.5) * SX, y: Y0 + (-23.5 - point.lat) * SY };
+
+const O = proj(origin);
+const byId = Object.fromEntries(places.map((place) => [place.id, place]));
+
+function pathFor(id: string) {
+  const stops = [...(routeVia[id] ?? []).map((via) => byId[via]), byId[id]];
+  let d = `M${O.x.toFixed(1)} ${O.y.toFixed(1)}`;
+  let previous = O;
+  for (const stop of stops) {
+    const target = proj(stop);
+    const midX = (previous.x + target.x) / 2;
+    const midY = (previous.y + target.y) / 2;
+    const dx = target.x - previous.x;
+    const dy = target.y - previous.y;
+    const length = Math.hypot(dx, dy) || 1;
+    const controlX = midX - (dy / length) * length * 0.14;
+    const controlY = midY + (dx / length) * length * 0.14;
+    d += ` Q${controlX.toFixed(1)} ${controlY.toFixed(1)} ${target.x.toFixed(1)} ${target.y.toFixed(1)}`;
+    previous = target;
+  }
+  return d;
+}
+
+const anchor = { l: 'end', r: 'start', t: 'middle', b: 'middle' } as const;
+const labelFor = (place: (typeof places)[number], x: number, y: number) => {
+  const side = place.label ?? 'r';
+  const dx = side === 'l' ? -11 : side === 'r' ? 11 : 0;
+  const dy = side === 't' ? -12 : side === 'b' ? 22 : 5;
+  return { x: x + dx, y: y + dy, anchor: anchor[side] };
+};
+const mapped = places.map((place) => ({ ...place, count: eventsForPlace(place.id).length }));
+---
+<div class="grid gap-8 lg:grid-cols-[1.25fr_0.75fr] lg:items-start" id="route-map">
+  <div class="hidden border border-paper/15 bg-forest/60 p-3 md:block sm:p-5">
+    <svg
+      viewBox="0 0 830 700"
+      class="h-auto w-full text-paper"
+      role="group"
+      aria-label="Schematic map of trips from Mahikeng. Every destination also appears as a button beside the map."
+    >
+      {[1, 2, 3, 4, 5, 6].map((i) => (
+        <line x1="40" x2="790" y1={Y0 + i * 100} y2={Y0 + i * 100} stroke="currentColor" opacity="0.06" />
+      ))}
+      {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+        <line y1="20" y2="680" x1={40 + i * 100} x2={40 + i * 100} stroke="currentColor" opacity="0.06" />
+      ))}
+
+      {mapped.map((place) => (
+        <path
+          d={pathFor(place.id)}
+          class="map-route"
+          data-route={place.id}
+          data-place={place.id}
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+          opacity="0.22"
+        />
+      ))}
+
+      {mapped.map((place) => {
+        const { x, y } = proj(place);
+        const label = labelFor(place, x, y);
+        return (
+          <g
+            class="map-pin"
+            data-place={place.id}
+            role="button"
+            tabindex="0"
+            aria-label={`${place.name}, ${place.count} ${place.count === 1 ? 'trip' : 'trips'} in the track record`}
+          >
+            {place.offMap ? (
+              <path d={`M${x - 7} ${y + 7} L${x} ${y - 7} L${x + 7} ${y + 7} Z`} fill="#f3efe6" />
+            ) : (
+              <circle class="dot" cx={x} cy={y} r="6" fill="#f3efe6" stroke="#123c2f" stroke-width="2" />
+            )}
+            <text
+              x={label.x}
+              y={label.y}
+              text-anchor={label.anchor}
+              font-size="13"
+              font-weight="600"
+              fill="#f3efe6"
+              paint-order="stroke"
+              stroke="#111a16"
+              stroke-width="4"
+            >{place.name}</text>
+          </g>
+        );
+      })}
+
+      <g>
+        <circle cx={O.x} cy={O.y} r="12" fill="#ffc20e" stroke="#f3efe6" stroke-width="3" />
+        <text
+          x={O.x - 19}
+          y={O.y + 6}
+          text-anchor="end"
+          font-size="18"
+          font-weight="700"
+          fill="#ffc20e"
+          paint-order="stroke"
+          stroke="#111a16"
+          stroke-width="5"
+        >Mahikeng</text>
+      </g>
+    </svg>
+    <p class="mt-2 px-1 text-xs text-paper/65">
+      Schematic, not to scale. Lines show the direction of travel from Mahikeng.
+    </p>
+  </div>
+
+  <div class="lg:sticky lg:top-28">
+    <div id="map-panel" class="bg-paper p-6 text-ink lg:min-h-52" aria-live="polite">
+      <div data-panel="">
+        <p class="font-display text-2xl font-semibold tracking-[-0.04em]">Pick a destination.</p>
+        <p class="mt-2 text-sm text-ink/70">Select a destination below to see the trips and their dates.</p>
+      </div>
+      {mapped.map((place) => (
+        <div data-panel={place.id} hidden>
+          <p class="font-display text-2xl font-semibold tracking-[-0.04em]">{place.name}</p>
+          <p class="mt-1 text-xs font-semibold tracking-[0.12em] text-forest/60 uppercase">
+            {place.count} {place.count === 1 ? 'trip' : 'trips'} in the track record
+          </p>
+          <ul class="mt-4 max-h-72 space-y-4 overflow-y-auto pr-2">
+            {eventsForPlace(place.id).map((event) => (
+              <li class="border-t border-line pt-3 first:border-0 first:pt-0">
+                <p class="text-xs font-semibold text-forest">{event.when}</p>
+                <p class="mt-1 text-sm text-ink/75">{event.text}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+
+    <ul class="mt-4 grid max-h-64 grid-cols-2 gap-2 overflow-y-auto pr-1" aria-label="Destinations">
+      {mapped.map((place) => (
+        <li>
+          <button
+            type="button"
+            data-place={place.id}
+            class="w-full border border-paper/20 px-3 py-2 text-left text-xs font-medium text-paper/75 transition-colors hover:border-sun hover:text-sun aria-pressed:border-sun aria-pressed:bg-sun aria-pressed:text-ink"
+            aria-pressed="false"
+          >{place.name.split(',')[0]}</button>
+        </li>
+      ))}
+    </ul>
+  </div>
+</div>
+
+<script>
+  const root = document.getElementById('route-map');
+  if (root) {
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-panel]'));
+    const triggers = Array.from(root.querySelectorAll<HTMLElement>('[data-place]'));
+    const routes = Array.from(root.querySelectorAll<SVGPathElement>('[data-route]'));
+
+    const select = (id: string) => {
+      panels.forEach((panel) => { panel.hidden = (panel.dataset.panel ?? '') !== id; });
+      routes.forEach((route) => route.classList.toggle('is-active', route.dataset.route === id));
+      triggers.forEach((trigger) => {
+        const active = trigger.dataset.place === id;
+        trigger.classList.toggle('is-active', active);
+        if (trigger.tagName === 'BUTTON') trigger.setAttribute('aria-pressed', String(active));
+      });
+    };
+
+    triggers.forEach((trigger) => {
+      trigger.addEventListener('click', () => select(trigger.dataset.place ?? ''));
+      trigger.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          select(trigger.dataset.place ?? '');
+        }
+      });
+    });
+  }
+</script>

@@ -1,0 +1,96 @@
+---
+import { nav, site } from '../data/site';
+
+const path = Astro.url.pathname;
+const isActive = (href: string) => path === href || (href !== '/' && path.startsWith(href));
+---
+<header class="sticky top-0 z-50 border-b border-line bg-paper">
+  <div class="wrap flex h-[4.75rem] items-center justify-between gap-6">
+    <a href="/" class="flex shrink-0 items-center gap-3">
+      <svg viewBox="0 0 36 36" class="h-8 w-8 shrink-0" aria-hidden="true">
+        <rect width="36" height="36" fill="#123c2f" />
+        <path d="M9 8v20h17" fill="none" stroke="#ffc20e" stroke-width="4" />
+        <circle cx="26" cy="28" r="3" fill="#ffc20e" />
+      </svg>
+      <span class="flex flex-col leading-none">
+        <span class="font-display text-[1.08rem] font-semibold tracking-[-0.045em] text-ink">
+          Lovisto <span class="serif font-normal">Tours</span>
+        </span>
+        <span class="mt-1.5 text-[0.55rem] font-semibold tracking-[0.18em] text-ink/65 uppercase">
+          Transport &amp; Enterprise
+        </span>
+      </span>
+    </a>
+
+    <nav class="hidden items-center gap-5 xl:flex" aria-label="Main navigation">
+      {nav.map((item) => (
+        <a
+          href={item.href}
+          aria-current={isActive(item.href) ? 'page' : undefined}
+          class:list={[
+            'text-sm font-medium transition-colors hover:text-ink',
+            isActive(item.href) ? 'text-ink underline decoration-sun decoration-2 underline-offset-8' : 'text-ink/70',
+          ]}
+        >{item.label}</a>
+      ))}
+    </nav>
+
+    <div class="flex items-center gap-3 sm:gap-5">
+      <a href={site.phoneHref} class="hidden text-sm font-medium text-ink/70 hover:text-ink xl:inline">
+        {site.phone}
+      </a>
+      <a href="/contact" class="btn btn-primary hidden min-h-10 px-5 py-2 sm:inline-flex">Plan a trip</a>
+      <button
+        id="menu-btn"
+        type="button"
+        class="flex min-h-11 min-w-11 items-center justify-center border border-line text-ink xl:hidden"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label="Open navigation menu"
+      >
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <path d="M3 7h18M3 12h18M3 17h18" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div id="mobile-menu" hidden class="border-t border-line bg-paper xl:hidden">
+    <nav class="wrap flex flex-col py-4" aria-label="Mobile navigation">
+      {nav.map((item) => (
+        <a
+          href={item.href}
+          aria-current={isActive(item.href) ? 'page' : undefined}
+          class="flex items-baseline justify-between border-b border-line py-4 font-display text-2xl font-semibold tracking-[-0.04em] aria-[current=page]:text-forest"
+        >
+          {item.label}
+          <span class="text-xs font-normal text-ink/65">↗</span>
+        </a>
+      ))}
+      <div class="mt-6 flex flex-col gap-3 pb-2 sm:flex-row">
+        <a href="/contact" class="btn btn-primary">Plan a trip</a>
+        <a href={site.phoneHref} class="btn btn-line">{site.phone}</a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const button = document.getElementById('menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  if (button && menu) {
+    const setOpen = (open: boolean) => {
+      button.setAttribute('aria-expanded', String(open));
+      button.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
+      menu.hidden = !open;
+    };
+    button.addEventListener('click', () => setOpen(button.getAttribute('aria-expanded') !== 'true'));
+    menu.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setOpen(false)));
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && button.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+        button.focus();
+      }
+    });
+  }
+</script>
